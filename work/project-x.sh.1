@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#... Fire up the Python env for this project
+if [ `hostname` == 'instance-4' ] || [ `hostname` == 'instance-5' ]
+then
+    source ~/python-envs/python363/bin/activate
+elif [ `hostname` == 'instance-gpu-6' ]
+then
+    source ~/python-envs/python35gpu/bin/activate
+fi
+
+pgrep "jupyter" > /dev/null
+jupyter_is_running=$?
+
+pgrep "nvidia" > /dev/null
+can_run_jupyter=$?
+
+
+#... Start Jupyter, if needed
+if [ $can_run_jupyter -eq 1 ]
+then
+    if [ $jupyter_is_running -eq 1 ]
+    then
+	echo "Starting Jupyter Notebook..."
+	cd ~/work
+	### nohup jupyter-notebook --no-browser --port=5000 > ./jupyter.log 2>&1 &
+	
+	jupyter serverextension enable --py jupyterlab --sys-prefix
+	nohup jupyter lab --no-browser --port=5000 > ./jupyter.log 2>&1 &
+    else
+	echo "Jupyter is running..."
+    fi
+
+    echo ""
+    echo ">>>>> Remember to use http NOT httpS in the URL... <<<<<"
+    echo ""
+else
+    echo "I WILL NOT run Jupyter on a GPU VM..."
+fi
+
+cd ~/buckets/project-x
+
+#... Mount the buckets
+declare -a buckets=("buildings" "project-x-logs" "saved_models" "joesandroid" "joesgopro")
+for target in "${buckets[@]}"
+do
+    if [ -f $target/.ismounted ]; then
+	echo "Directory '$target' already mounted..."
+    else
+	echo Mounting $target "..."
+	gcsfuse $target /home/joeantol/buckets/project-x/$target
+    fi
+done
+
+cd ~/work/project-x
+
+echo "Ready to go..."
+pwd
