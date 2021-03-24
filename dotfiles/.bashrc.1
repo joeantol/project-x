@@ -1,0 +1,162 @@
+#... C
+
+PS1="`hostname` > "
+umask 007
+
+alias ll='/bin/ls -altg'
+alias lr='/bin/ls -altrg'
+alias lss='/bin/ls -altS'
+alias j=jobs
+alias f=fg
+alias m=more
+alias cd=sd
+alias pe=printenv
+alias cx='chmod 755'
+alias cw='chmod 744'
+##alias rm=saferm
+alias locked='rlog -R -L  -h'
+alias diffs='rcsdiff'
+alias ct=cleartool
+alias h=history
+alias tf='tail -f'
+alias cls='clear'
+alias pp2='pp +2'
+alias pp3='pp +3'
+alias pp4='pp +4'
+alias pp5='pp +5'
+alias pp6='pp +6'
+alias pp7='pp +7'
+alias pp8='pp +8'
+alias pp9='pp +9'
+alias email='email -r smtp.measurisk.com -p 25 -u antolj -p katebabs01'
+alias mypath='echo $PATH | tr ":" "\n"'
+alias myuc='uc -t -ne -i -b -B -lt'
+
+function titleBar
+{
+   user=`/usr/bin/whoami`
+   dirs=`dirs`
+   hostname='localhost'
+   
+   case $TERM in
+       iMac*)
+           ;;
+       xterm*)
+           ##echo -ne "\033]0;${user}@${hostname}: ${dirs}\007"
+           echo -ne "\033]0;${TITLE}: ${dirs}\007"
+           export PS1="iMac > "
+
+	   ;;
+       *)
+	   TITLEBAR=''
+	   ;;
+   esac
+
+}
+
+function pp {
+   pushd $1
+   titleBar
+}
+
+function po {
+   popd
+   titleBar
+}
+
+function pd {
+   titleBar
+   dirs | tr " " "\n" | awk '{print NR-1 "  " $0}'
+}
+
+function sd {
+   \cd $1
+   titleBar
+}
+
+function pwd {
+   echo $PWD
+   titleBar
+}
+
+function saferm {
+   for i in $@
+   do 
+     mv $i ~/.trash
+   done
+
+}
+
+function bout {
+   bcp MRDB_PROD..$1 out $1.bcp -c -U turnover -P bmr2007turnover -S $2
+}
+
+function bin {
+   bcp MRDB_PROD..$1 in $1.bcp -c -U turnover -P bmr2007turnover -S $2 -b 10000
+}
+
+function mvit {
+   echo "bcp out from prod..."
+   bout $1 BMR_PROD
+
+   echo "bcp into dev..."
+   bin  $1 BMR_DEV
+}
+
+###export proxy_user=antolj
+###export proxy_pass=
+###export http_proxy=http://xoproxy1.measurisk.com:8080
+###export https_proxy=http://xoproxy1.measurisk.com:8080
+
+export SVN=$HOME/svn
+export UTILS=$HOME/vss/utils
+export SSDIR=//mrprodfs01/projects/VSS/WEB
+export VSSWORKDIR=~/mssql
+export SVNWORKDIR=~/svn
+export CYGTMP="c:\\cygwin\\tmp"
+export TIDY=1
+
+export SYBASE=/cygdrive/c/sybase
+export SYBASE_OCS=OCS-12_5
+
+export JAVA_HOME=/cygdrive/c/Sun/SDK/jdk/
+
+export LD_LIBRARY_PATH=$SYBASE/$SYBASE_OCS/lib:$SYBASE/$SYBASE_OCS/dll:/usr/lib:$SYBASE/lib:$LD_LIBRARY_PATH
+
+LIB=c:\sql10\OCS-12_5\lib
+
+export PATH=.:/Users/AntoliMac01/Anaconda/anaconda/bin:/cygdrive/c/"Program Files"/"Microsoft SQL Server"/90/Tools/binn/:$SYBASE:$SYBASE/$SYBASE_OCS/dll:/cygdrive/c/"Program Files"/"Microsoft Office"/OFFICE11:/cygdrive/c/"Program Files"/"Microsoft Visual SourceSafe":/usr/local/bin:/usr/sbin:/usr/sbin/bin:/usr/bin:/cygdrive/c/vss/utils:$UTILS:$HOME/perl:c:/progra~1/R/R-2.8.1/bin:~/perl/cds/src:$JAVA_HOME/bin:$JAVA_HOME/include:$JAVA_HOME/lib:/cygdrive/c/progra~1/mcr/v71/runtime/win32:/cygdrive/c/perl2exe:/Applications/android-sdk-mac_x86/platform-tools:$PATH
+
+###export PATH=.:$SYBASE:$SYBASE_OCS/dll:/cygdrive/c/"Program Files"/"Microsoft Office"/OFFICE11:/cygdrive/c/"Program Files"/"Microsoft Visual SourceSafe":/usr/local/bin:/usr/sbin/bin:/usr/bin:/cygdrive/c/vss/utils:$UTILS:/cygdrive/c/progra~1/mcr/v71/runtime/win32:$HOME/perl:$PATH
+
+###export PATH=.:$SYBASE:$SYBASE/$SYBASE_OCS/dll:/cygdrive/c/"Program Files"/"Microsoft Office"/OFFICE11:/cygdrive/c/"Program Files"/"Microsoft Visual SourceSafe":/usr/local/bin:/usr/sbin/bin:/usr/bin:/cygdrive/c/vss/utils:$UTILS:$HOME/perl:$PATH
+
+export PERL5LIB=/cygdrive/p/perl/lib/perl5:/cygdrive/p/perl/lib/perl5/cygwin/:/cygdrive/p/perl/lib/perl5/site_perl:/cygdrive/p/perl/lib/perl5/site_perl/5.8/cygwin:/cygdrive/p/perl/lib/perl5/site_perl/5.8:/cygdrive/p/perl/lib/perl5/vendor_perl/5.8/cygwin:/cygdrive/p/perl/lib/perl5/vendor_perl/5.8:/cygdrive/p/perl/lib/perl5/5.8:/cygdrive/p/perl/lib/perl5/5.8/cygwin
+
+##export SYBASE=c:\\sybase
+export SYBASE=c:/sybase
+
+alias gvim='gvim -n &'
+
+##export MANPATH=/usr/man:/export/vol/man:/export/vol/X11R5/usr/man
+##export MANPATH=${MANPATH}/home/jantol/bin/sqsh-2.1/doc
+
+export EDITOR=vi
+
+#... Cmd line editing via vi
+set -o vi
+stty  erase ^H
+
+set backspace=indent,eol,start
+
+
+if [ ! -z $DISPLAY ]; then
+
+  #... No bell
+##  /usr/openwin/bin/xset -b
+
+  #... Needed for perl debugger
+  stty  erase ^H
+fi
+
+###source /usr/local/bin/virtualenvwrapper.sh
